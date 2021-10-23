@@ -5,7 +5,7 @@ import Scene from "./Scene";
 export const Wrapper = () => {
   const [jsonValue, setJsonValue] = useState(
     JSON.stringify({
-      roomBoundary: [
+      planBoundary: [
         {
           x: 0,
           y: 0,

@@ -76,13 +76,13 @@ class Scene extends Component {
     // 1. Define the shape. This can be THREE.Shape(), THREE.Spere(), THREE.Path(), etc.
     const square = new THREE.Shape();
     square.moveTo(0, 0);
-    this.state.jsonObject.roomBoundary.forEach((vertex) => {
+    this.state.jsonObject.planBoundary.forEach((vertex) => {
       console.log("Moving vertex to x: ", vertex.x, " y: ", vertex.y);
       square.lineTo(vertex.x, vertex.y);
     });
     square.lineTo(
-      this.state.jsonObject.roomBoundary[0].x,
-      this.state.jsonObject.roomBoundary[0].y
+      this.state.jsonObject.planBoundary[0].x,
+      this.state.jsonObject.planBoundary[0].y
     );
     // 2. The geometry objects are the body of the 3D model you will be drawing - in this case the 2D square we defined above
     const geometry = new THREE.ShapeGeometry(square);
