@@ -1,8 +1,12 @@
 ## To Run locally and experiment
 
-git clone https://github.com/asjadanis/react-three-boilerplate.git <br>
-npm install <br>
-npm start <br>
+First, you are going to need node, as well as npm, yarn or lerna..
+
+```
+git clone https://github.com/arealizeai/arealize-startcode-2021
+npm install
+npm start
+```
 
 ## Learning Resources
 
