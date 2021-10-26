@@ -1,5 +1,12 @@
 import React, { useState } from "react";
 
+function prettyPrint(value) {
+  var ugly = value;
+  var obj = JSON.parse(ugly);
+  var pretty = JSON.stringify(obj, undefined, 4);
+  return pretty;
+}
+
 export const JsonViewer = (props) => {
   return (
     <>
@@ -8,7 +15,7 @@ export const JsonViewer = (props) => {
         id="JsonValue"
         cols="120"
         rows="20"
-        value={props.jsonValue}
+        value={prettyPrint(props.jsonValue)}
         onChange={(e) => props.setJsonValue(e.target.value)}
       ></textarea>
     </>
