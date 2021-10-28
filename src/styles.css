@@ -1,0 +1,11 @@
+body {
+  background-image: url("https://media.istockphoto.com/vectors/rubber-duck-childrens-toy-seamless-pattern-vector-id1094651534?k=20&m=1094651534&s=612x612&w=0&h=e8EGu2DvAZX5JcOlUaB31XZA9JcjqRleVra58ILsObU=");
+  background-repeat: repeat;
+}
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
+  color: white;
+  font-size: x-large;
+}
