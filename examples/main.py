@@ -108,7 +108,7 @@ def validate_solution(floor_plan, rooms):
 
 
 if __name__ == '__main__':
-    floor_plan, rooms = parse_json('basic_example_input.json')
+    floor_plan, rooms = parse_json('./examples/basic_example_input.json')
     result = brute_force(floor_plan, rooms)
     print('Results of brute-force:\n')
     pprint.pprint(result)
