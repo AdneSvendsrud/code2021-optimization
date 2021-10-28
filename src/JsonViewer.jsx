@@ -26,7 +26,7 @@ export const JsonViewer = (props) => {
         cols={120}
         rows={20}
         value={prettyPrint(jsonValue)}
-        onChange={(e) => setJsonValue(e.target.value)}
+        onChange={(e) => setJsonValue(e.target.value.replace(/'/g, '"'))}
       />
     </React.Fragment>
   );

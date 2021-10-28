@@ -1,6 +1,6 @@
 import React from "react";
 import { Canvas } from "react-three-fiber";
-import { OrbitControls, OrthographicCamera } from "@react-three/drei";
+import { OrbitControls, OrthographicCamera, Stats } from "@react-three/drei";
 import Room from "./Objects/Room";
 import Boundary from "./Objects/Boundary";
 import ExampleBox from "./Objects/ExampleBox";
@@ -26,6 +26,7 @@ const Renderer = (props) => {
           height={value.height}
           anchorTopLeftX={value.anchorTopLeftX}
           anchorTopLeftY={value.anchorTopLeftY}
+          text={value.type}
         />
       );
     }
@@ -55,8 +56,6 @@ const Renderer = (props) => {
         <ExampleBox position={[0, 5, 0]} />
         <Boundary width={100} height={100} />
         {RoomsListHOC}
-        {/* Our Controls. Allows us to drag the view and pan around. Try holding down Shift when dragging. */}
-        <OrbitControls />
         {/* Our Camera. Feel free to experiment (or change out to a PerspectiveCamera 👀?) */}
         <OrthographicCamera
           makeDefault
@@ -69,6 +68,10 @@ const Renderer = (props) => {
           far={20000}
           position={[0, 512, 0]}
         />
+        {/* Our Controls. Allows us to drag the view and pan around. Try holding down Shift when dragging. */}
+        <OrbitControls />
+        {/* FPS counter */}
+        {/* <Stats /> */}
       </Canvas>
     </React.Fragment>
   );
