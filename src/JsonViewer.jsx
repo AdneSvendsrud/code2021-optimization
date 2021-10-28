@@ -9,7 +9,7 @@ function prettyPrint(value: string) {
   } catch (e) {
     // JSON.Parse only works on valid JSON code.
     // This error is thrown whenever the JSON is not valid, e.g. while editing it in the textarea
-    console.error("JSON is not currently valid ", e);
+    console.info("JSON is not currently valid ", e);
   }
   return pretty;
 }
