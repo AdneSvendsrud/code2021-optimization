@@ -1,5 +1,7 @@
 body {
-  background-image: url("https://media.istockphoto.com/vectors/rubber-duck-childrens-toy-seamless-pattern-vector-id1094651534?k=20&m=1094651534&s=612x612&w=0&h=e8EGu2DvAZX5JcOlUaB31XZA9JcjqRleVra58ILsObU=");
+  /* background-image: url("https://media.istockphoto.com/vectors/rubber-duck-childrens-toy-seamless-pattern-vector-id1094651534?k=20&m=1094651534&s=612x612&w=0&h=e8EGu2DvAZX5JcOlUaB31XZA9JcjqRleVra58ILsObU="); */
+  background-image: url("./duck.jpg");
+  background-size: 25%;
   background-repeat: repeat;
 }
 
