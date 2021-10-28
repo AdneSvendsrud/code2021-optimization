@@ -7,19 +7,32 @@ import ExampleBox from "./Objects/ExampleBox";
 
 const Renderer = (props) => {
   const { jsonValue } = props;
-  const jsonObject = JSON.parse(jsonValue); // A javascript object containing the properties of jsonValue
+  let jsonObject;
+  try {
+    jsonObject = JSON.parse(jsonValue); // A javascript object containing the properties of jsonValue
+  } catch (e) {
+    // JSON.Parse only works on valid JSON code.
+    // This error is thrown whenever the JSON is not valid, e.g. while editing it in the textarea
+    console.info("JSON is not currently valid ", e);
+  }
 
   let RoomsListHOC = [];
-  for (const [key, value] of Object.entries(jsonObject.rooms)) {
-    RoomsListHOC.push(
-      <Room
-        key={key}
-        width={value.width}
-        height={value.height}
-        anchorTopLeftX={value.anchorTopLeftX}
-        anchorTopLeftY={value.anchorTopLeftY}
-      />
-    );
+  try {
+    for (const [key, value] of Object.entries(jsonObject.rooms)) {
+      RoomsListHOC.push(
+        <Room
+          key={key}
+          width={value.width}
+          height={value.height}
+          anchorTopLeftX={value.anchorTopLeftX}
+          anchorTopLeftY={value.anchorTopLeftY}
+        />
+      );
+    }
+  } catch (e) {
+    // JSON.Parse only works on valid JSON code.
+    // This error is thrown whenever the JSON is not valid, e.g. while editing it in the textarea
+    console.info("JSON is not currently valid ", e);
   }
 
   return (
