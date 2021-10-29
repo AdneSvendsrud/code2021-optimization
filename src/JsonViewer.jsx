@@ -23,8 +23,6 @@ export const JsonViewer = (props) => {
       <textarea
         name="jsonValueArea"
         id="JsonValue"
-        cols={120}
-        rows={20}
         value={prettyPrint(jsonValue)}
         onChange={(e) => setJsonValue(e.target.value.replace(/'/g, '"'))}
       />
