@@ -4,6 +4,8 @@ import Renderer from "./Renderer";
 import JsonViewer from "./JsonViewer";
 
 export default function App() {
+  // Storing the initial JSON value inside of a variable.
+  // This basically gives us a (const jsonValue) and a (function setJsonValue) with which changes jsonValue
   const [jsonValue, setJsonValue] = useState(
     JSON.stringify({
       planBoundary: [

@@ -69,8 +69,7 @@ def brute_force(floor_plan, rooms):
     """
     # Since we're brute-forcing, we pick out the first room, and fit it into the corner. This corresponds to doing
     # nothing with it since it's anchor is (0, 0). We leave this be, and start with the next
-    fitted_rooms = dict()
-    fitted_rooms[rooms[0]["id"]] = rooms[0]
+    fitted_rooms = [rooms[0]]
     # We need parameters to check if a room fits. So we extract the width and height of the floor plan
     x_values = list(map(lambda e: e["x"], floor_plan))
     min_x_coord = min(x_values)
@@ -86,12 +85,9 @@ def brute_force(floor_plan, rooms):
     # Note than in this most simple solution, the room is a square. This will not always be the case (how do you deal
     # with that?)
     print(f'Width and height of the floor plan: ({fp_width}, {fp_height})\n')
-
-    prev_room = rooms[0]
-    for room in rooms:
-        room_id = room["id"]
+    for roomNumber, room in enumerate(rooms):
         # If it's the first room, we've already dealt with it, therefore skip it
-        if room_id in fitted_rooms:
+        if roomNumber == 0:
             continue
         # Try fitting the room to the right of, or below the previous room
         potential_x_anchor = prev_room['anchorTopLeftX'] + prev_room['width']

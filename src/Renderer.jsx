@@ -16,6 +16,7 @@ const Renderer = (props) => {
     console.info("JSON is not currently valid ", e);
   }
 
+  // The rooms in jsonObject.rooms are turned into a list of <Room> components.
   let RoomsListHOC = [];
   try {
     for (const [key, value] of Object.entries(jsonObject.rooms)) {
@@ -50,12 +51,18 @@ const Renderer = (props) => {
         {/* Lighting */}
         <ambientLight intensity={0.25} />
         <pointLight intensity={0.75} position={[500, 500, 1000]} />
-        {/* Creates a 200x200 with 20 segments */}
+
+        {/* Creates a 200x200 grid with 20 segments */}
         <gridHelper args={[200, 20]} />
+
         {/* EXAMPLE of a box on our plane */}
-        <ExampleBox position={[0, 5, 0]} />
+        {/* <ExampleBox position={[0, 5, 0]} /> */}
+
+        {/* Drawing the floorplan boundary */}
         <Boundary width={100} height={100} />
+        {/* Displaying the rooms */}
         {RoomsListHOC}
+
         {/* Our Camera. Feel free to experiment (or change out to a PerspectiveCamera 👀?) */}
         <OrthographicCamera
           makeDefault
@@ -68,8 +75,10 @@ const Renderer = (props) => {
           far={20000}
           position={[0, 512, 0]}
         />
+
         {/* Our Controls. Allows us to drag the view and pan around. Try holding down Shift when dragging. */}
         <OrbitControls />
+
         {/* FPS counter */}
         {/* <Stats /> */}
       </Canvas>
