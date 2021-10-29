@@ -106,9 +106,22 @@ def brute_force(floor_plan, rooms):
 def validate_solution(floor_plan, rooms):
     print("Add your validation function here")
 
+def dict_to_json(floor_plan, result_dict):
+    final_dict = {
+        "planBoundary": floor_plan,
+        "rooms": result
+    }
+    json_str = json.dumps(final_dict, indent=4)
+    with open('src/room_solution.json', 'w') as json_file:
+        json.dump(final_dict, json_file)
+    print("+" + "-" * 100)
+    print("Solution was found and stored in src/room_solution.json")
+    print()
+    return json_str
 
 if __name__ == '__main__':
     floor_plan, rooms = parse_json('./TASK_examples/basic_example_input.json')
     result = brute_force(floor_plan, rooms)
     print('Results of brute-force:\n')
-    pprint.pprint(result)
+    json_solution = dict_to_json(floor_plan, result)
+    pprint.pprint(json_solution)
