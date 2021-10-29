@@ -17,8 +17,8 @@
       "y": 100
     }
   ],
-  "rooms": {
-    "1": {
+  "rooms": [
+    {
       "id": "1",
       "width": 10,
       "height": 10,
@@ -26,7 +26,7 @@
       "anchorTopLeftY": 0,
       "type": "workRoom"
     },
-    "2": {
+    {
       "id": "2",
       "width": 10,
       "height": 10,
@@ -34,7 +34,7 @@
       "anchorTopLeftY": 0,
       "type": "workRoom"
     },
-    "3": {
+    {
       "id": 3,
       "width": 60,
       "height": 50,
@@ -42,7 +42,7 @@
       "anchorTopLeftY": 0,
       "type": "meetRoom"
     },
-    "4": {
+    {
       "id": 4,
       "width": 20,
       "height": 20,
@@ -50,5 +50,5 @@
       "anchorTopLeftY": 0,
       "type": "openWork"
     }
-  }
+  ]
 }
