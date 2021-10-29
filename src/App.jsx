@@ -25,8 +25,8 @@ export default function App() {
         },
       ],
 
-      rooms: {
-        1: {
+      rooms: [
+        {
           id: 1,
           width: 20,
           height: 20,
@@ -34,7 +34,7 @@ export default function App() {
           anchorTopLeftY: 0,
           type: "workRoom",
         },
-        2: {
+        {
           id: 2,
           width: 20,
           height: 20,
@@ -42,7 +42,7 @@ export default function App() {
           anchorTopLeftY: 0,
           type: "workRoom",
         },
-        3: {
+        {
           id: 3,
           width: 20,
           height: 20,
@@ -50,7 +50,7 @@ export default function App() {
           anchorTopLeftY: 0,
           type: "workRoom",
         },
-        4: {
+        {
           id: 4,
           width: 60,
           height: 20,
@@ -58,7 +58,7 @@ export default function App() {
           anchorTopLeftY: 20,
           type: "meetRoom",
         },
-        5: {
+        {
           id: 4,
           width: 40,
           height: 20,
@@ -66,7 +66,7 @@ export default function App() {
           anchorTopLeftY: 20,
           type: "meetRoom",
         },
-        6: {
+        {
           id: 4,
           width: 40,
           height: 40,
@@ -74,7 +74,7 @@ export default function App() {
           anchorTopLeftY: 40,
           type: "meetRoom",
         },
-        7: {
+        {
           id: 4,
           width: 40,
           height: 40,
@@ -82,7 +82,7 @@ export default function App() {
           anchorTopLeftY: 40,
           type: "meetRoom",
         },
-      },
+      ],
     })
   );
 
