@@ -61,30 +61,38 @@ def brute_force(floor_plan, rooms):
     This is a function demonstrating the possibility of brute-force approach. It will simply return the first possible
     configuration of rooms it can find that satisfies the rules.
     :param floor_plan:
-        Array containing the coordinates of the floor plan
+        List containing the coordinates of the floor plan
     :param rooms:
-        Dictionary containing every room to be fitted into the floor plan
+        List containing every room to be fitted into the floor plan
     :return:
         Dictionary containing all the rooms, and their position within the floor plan (i.e. changed anchors)
     """
     # Since we're brute-forcing, we pick out the first room, and fit it into the corner. This corresponds to doing
     # nothing with it since it's anchor is (0, 0). We leave this be, and start with the next
-    fitted_rooms = rooms['1']
+    fitted_rooms = dict()
+    fitted_rooms[rooms[0]["id"]] = rooms[0]
     # We need parameters to check if a room fits. So we extract the width and height of the floor plan
-    min_x_coord = min(floor_plan, key=lambda coord: coord['x'])['x']
-    max_x_coord = max(floor_plan, key=lambda coord: coord['x'])['x']
+    x_values = list(map(lambda e: e["x"], floor_plan))
+    min_x_coord = min(x_values)
+    max_x_coord = max(x_values)
+
     fp_width = min_x_coord + max_x_coord
-    min_y_coord = min(floor_plan, key=lambda coord: coord['y'])['y']
-    max_y_coord = max(floor_plan, key=lambda coord: coord['y'])['y']
+
+    y_values = list(map(lambda e: e["y"], floor_plan))
+    min_y_coord = min(y_values)
+    max_y_coord = max(y_values)
+
     fp_height = min_y_coord + max_y_coord
     # Note than in this most simple solution, the room is a square. This will not always be the case (how do you deal
     # with that?)
     print(f'Width and height of the floor plan: ({fp_width}, {fp_height})\n')
-    for room_number, room in rooms.items():
+
+    prev_room = rooms[0]
+    for room in rooms:
+        room_id = room["id"]
         # If it's the first room, we've already dealt with it, therefore skip it
-        if room in fitted_rooms:
+        if room_id in fitted_rooms:
             continue
-        prev_room = fitted_rooms[-1]
         # Try fitting the room to the right of, or below the previous room
         potential_x_anchor = prev_room['anchorTopLeftX'] + prev_room['width']
         potential_y_anchor = prev_room['anchorTopLeftY'] + prev_room['height']
@@ -92,11 +100,13 @@ def brute_force(floor_plan, rooms):
             # Since we have not dealt with the y-anchor, this remains the same
             room['anchorTopLeftX'] = potential_x_anchor
             # Add the room to the fitted rooms
-            fitted_rooms.append(room)
+            fitted_rooms[room_id] = room
         elif potential_y_anchor + room['height'] <= fp_height:
             # Do the same, only opposite to the x-anchor
             room['anchorTopLeftY'] = potential_y_anchor
-            fitted_rooms.append(room)
+            fitted_rooms[room_id] = room
+
+        prev_room = room
     # If we managed to fit all rooms, then return them. Else we raise an exception
     if len(rooms) == len(fitted_rooms):
         return fitted_rooms
