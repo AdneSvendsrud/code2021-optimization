@@ -69,7 +69,7 @@ def brute_force(floor_plan, rooms):
     """
     # Since we're brute-forcing, we pick out the first room, and fit it into the corner. This corresponds to doing
     # nothing with it since it's anchor is (0, 0). We leave this be, and start with the next
-    fitted_rooms = [rooms['1']]
+    fitted_rooms = rooms['1']
     # We need parameters to check if a room fits. So we extract the width and height of the floor plan
     min_x_coord = min(floor_plan, key=lambda coord: coord['x'])['x']
     max_x_coord = max(floor_plan, key=lambda coord: coord['x'])['x']
@@ -104,11 +104,11 @@ def brute_force(floor_plan, rooms):
 
 
 def validate_solution(floor_plan, rooms):
-    print("Some validation function should be appropriate here")
+    print("Add your validation function here")
 
 
 if __name__ == '__main__':
-    floor_plan, rooms = parse_json('./examples/basic_example_input.json')
+    floor_plan, rooms = parse_json('./TASK_examples/basic_example_input.json')
     result = brute_force(floor_plan, rooms)
     print('Results of brute-force:\n')
     pprint.pprint(result)
