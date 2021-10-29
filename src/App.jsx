@@ -89,8 +89,14 @@ export default function App() {
   return (
     <div className="App">
       <h1>Arealize Start Code Hackathon 2021</h1>
-      <JsonViewer jsonValue={jsonValue} setJsonValue={setJsonValue} />
-      <Renderer jsonValue={jsonValue} />
+      <div className="App-container">
+        <div className="App-container__json-viewer">
+          <JsonViewer jsonValue={jsonValue} setJsonValue={setJsonValue} />
+        </div>
+        <div className="App-container__renderer">
+          <Renderer jsonValue={jsonValue} />
+        </div>
+      </div>
     </div>
   );
 }

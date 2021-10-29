@@ -11,3 +11,20 @@ body {
   color: white;
   font-size: x-large;
 }
+
+.App-container {
+  display: flex;
+}
+
+.App-container__json-viewer {
+  flex: 1;
+}
+
+.App-container__renderer {
+  flex: 2;
+}
+
+textarea {
+  height: 100%;
+  width: 100%;
+}
