@@ -29,6 +29,7 @@ import numpy as np
 import json
 import pprint
 
+from algorithm_EVO import Algorithm
 
 def parse_json(filepath):
     """
@@ -106,6 +107,11 @@ def brute_force(floor_plan, rooms):
 def validate_solution(floor_plan, rooms):
     print("Add your validation function here")
 
+def run_evolution():
+    algo = Algorithm(100, 100)
+    algo.run(3)
+    
+
 def dict_to_json(floor_plan, result_dict):
     final_dict = {
         "planBoundary": floor_plan,
@@ -125,3 +131,6 @@ if __name__ == '__main__':
     print('Results of brute-force:\n')
     json_solution = dict_to_json(floor_plan, result)
     pprint.pprint(json_solution)
+
+    print("\n\n" + "#" * 100 + "\n\n" + "   Evolution\n\n")
+    run_evolution()
