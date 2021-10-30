@@ -151,10 +151,10 @@ class Algorithm:
                 # mutate all rooms
                 for r_i in rms:
                     r = fl.rooms[r_i]
-                    self.mutate_room(fl, r, randint(0,3), r_i) # DEBUG
+                    self.mutate_room(fl, r, randint(0,7), r_i) # DEBUG
                 for m_i in mts:
                     r = fl.rooms[m_i]
-                    self.mutate_room(fl, r, randint(0,3), m_i) # DEBUG
+                    self.mutate_room(fl, r, randint(0,7), m_i) # DEBUG
 
             # calculate fitness for all floors
             sorted_floors = sorted(self.floors, key=lambda x: x.fitness()[0], reverse=True)
@@ -202,17 +202,19 @@ class Algorithm:
                 floor.restore_object(floor.rooms[i], x, y, i)
                 # moves = [(x-1, y),(x, y-1), (x, y+1), (x+1, y),
                 #          (x-1, y+1),(x-1, y-1), (x+1, y-1), (x+1, y+1)]
-                # moves = [(max(x-1,0), y),(x, max(y-1,0)), 
-                #         (x, min(y+1, floor.height)),
-                #         (min(x+1, floor.width), y),
-                #         (max(x-1,0), min(y+1, floor.height)),
-                #         (max(x-1,0), max(y-1,0)), (min(x+1,floor.width),
-                #         max(y-1,0)), 
-                #         (min(x+1,floor.width), min(y+1, floor.height))]
 
-                moves = [(max(x-1,0), y),(x, max(y-1,0)),
+                # 8 direction move support
+                moves = [(max(x-1,0), y),(x, max(y-1,0)), 
                         (x, min(y+1, floor.height)),
-                        (min(x+1, floor.width), y)]  
+                        (min(x+1, floor.width), y),
+                        (max(x-1,0), min(y+1, floor.height)),
+                        (max(x-1,0), max(y-1,0)), 
+                        (min(x+1,floor.width),max(y-1,0)), 
+                        (min(x+1,floor.width), min(y+1, floor.height))]
+
+                # moves = [(max(x-1,0), y),(x, max(y-1,0)),
+                #         (x, min(y+1, floor.height)),
+                #         (min(x+1, floor.width), y)]  
                 shuffle(moves)
                 scores = []
                 # print("MOVES ", moves)
@@ -238,6 +240,7 @@ class Algorithm:
         x, y = room.x, room.y
         fl.restore_object(room, x, y, roomId)
 
+        # 8 direction move
         moves = [(max(x-1,0), y),(x, max(y-1,0)), (x, min(y+1, fl.height)),
                  (min(x+1, fl.width), y),
                 (max(x-1,0), min(y+1, fl.height)),
@@ -245,8 +248,8 @@ class Algorithm:
                 (min(x+1,fl.width), min(y+1, fl.height))]
 
 
-        moves = [(max(x-1,0), y),(x, max(y-1,0)), (x, min(y+1, fl.height)),
-                 (min(x+1, fl.width), y)]            
+        # moves = [(max(x-1,0), y),(x, max(y-1,0)), (x, min(y+1, fl.height)),
+        #          (min(x+1, fl.width), y)]            
                 
 
         x_n, y_n = moves[direction]
