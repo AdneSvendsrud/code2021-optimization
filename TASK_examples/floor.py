@@ -8,6 +8,7 @@ OVERLAP_CONST = 66666
 class FloorType(Enum):
     OPEN = -1
 
+fl_id = 0
 
 class Floor:
     def __init__(self, width, height, rooms):
@@ -15,21 +16,23 @@ class Floor:
         #  0, max is top right
         #  max, 0 is bottom left
         #  max, max is bottom right
+        global fl_id
+        self.id = fl_id
+        fl_id += 1
         self.width = width
         self.height = height
         self.resolution = width * height
-        self.layout= [[[-1]*height]*width,  # grid of 100x100, everything is 0 for now
-                     [[-1]*height]*width]   # prev and modified version
-        self.rooms = [Room(room) for room in rooms]
+        self.layout= [[-1]*height for i in range(width)]  # grid of 100x100, everything is 0 for now
+                     #[[-1]*height for i in range(width)]]   # prev and modified version
         
-        self.workpl_ids = [i for i in range(len(self.rooms)) if self.rooms[i] == "workplaces"]
-        self.meet_ids = [i for i in range(len(self.rooms)) if self.rooms[i] == "meeting"]
+        self.rooms = [Room(room) for room in rooms['rooms']]
+        
+        self.workpl_ids = [i for i in range(len(self.rooms)) if self.rooms[i].type == "workplace"]
+        self.meet_ids = [i for i in range(len(self.rooms)) if self.rooms[i].type == "meeting"]
 
         summarize = 0
-        
         for room in self.rooms:
             summarize += room.area
-
             if (room.width > self.width and room.height > self.width) or (room.height > self.width and room.width > self.width):
                 raise RuntimeError('Can\'t fit the room sizes')
             if room.width > self.width or room.height > self.height:
@@ -47,8 +50,8 @@ class Floor:
             return False# Out of borders
         for i in range(room.width):
             for j in range(room.height):
-                if self.layout[1][x+i][y+j] != -1:
-                    self.layout[1][x+i][y+j] = roomId
+                if self.layout[x+i][y+j] == -1:
+                    self.layout[x+i][y+j] = roomId
                 else:
                     self.restore_object(room, x, y, roomId)
                     return False
@@ -60,9 +63,9 @@ class Floor:
             return # Out of borders, object was not placed
         for i in range(room.width):
             for j in range(room.height):
-                if self.layout[1][x+i][y+j] == roomId:
-                    self.layout[1][x+i][y+j] = -1
-        room.detach_coords()
+                if self.layout[x+i][y+j] == roomId:
+                    self.layout[x+i][y+j] = -1
+        # room.detach_coords()
 
     def place_relax(self, roomId, x, y):
         # It wont place the room unless it overlap
@@ -72,14 +75,17 @@ class Floor:
             return OVERLAP_CONST # Out of borders, object was not placed
         for i in range(room.width):
             for j in range(room.height):
-                if self.layout[1][x+i][y+j] != -1:
-                    self.layout[1][x+i][y+j] = roomId
+                if self.layout[x+i][y+j] == -1:
+                    self.layout[x+i][y+j] = roomId
                 else:
                     overlap += 1
+                    # print("overlaping ", x+i, y+j, room.width, room.height)
         # Point for a try should be kept as it drastically change the overlap?
         # if overlap > 0:
         #     self.restore_object(room, x, y, roomId)
-        room.set_coords(x, y)
+        # print("Here we are..." ,x, y)
+        # self.print_layout(self)
+        #room.set_coords(x, y)
         return overlap
 
     def sanity_check(self, room, x, y):
@@ -91,33 +97,44 @@ class Floor:
             return False
         return True
 
-    def restore_layout(self):
-        self.layout = [self.layout[0], [[-1]*self.height]*self.width]
+    # def restore_layout(self):
+    #     self.layout = [self.layout[0], [[-1]*self.height]*self.width]
 
-    def placing_done(self):
-        self.layout = [self.layout[1], [[-1]*self.height]*self.width]
+    # def placing_done(self):
+    #     self.layout = [self.layout[1], [[-1]*self.height]*self.width]
 
     def fitness(self):
         fit_score = 0
+        correctness = True
         for i, r in enumerate(self.rooms):
             x, y, w, h = r.x, r.y, r.width, r.height
             if r.type == "workplace":
                 walls = [x == 0, y == 0, x+w == self.width, y+h == self.height]
                 fit_score += 5 * sum(walls)
-                flag, score = self.access_to_ids(r, i, [-1]) # Access to open space
+                if sum(walls) == 0:
+                    correctness = False
+                flag, _ = self.access_to_ids(r, i, [-1]) # Access to open space
                 if flag: 
                     fit_score += 3
+                else:
+                    correctness = False
                 flag, neig_work = self.access_to_ids(r, i, self.workpl_ids) # Next to other workplaces
                 if flag:
-                    fit_score += score
+                    fit_score += neig_work
+                else:
+                    correctness = False
             else: # meeting rooms
-                flag, score = self.access_to_ids(r, i, [-1]) # Access to open space
+                flag, _ = self.access_to_ids(r, i, [-1]) # Access to open space
                 if flag: 
                     fit_score += 3
+                else:
+                    correctness = False
                 flag, neig_work = self.access_to_ids(r, i, self.meet_ids) # Next to other workplaces
                 if flag:
                     fit_score += neig_work * 2
-        return fit_score
+                else:
+                    correctness = False
+        return fit_score, correctness
 
     def access_to_ids(self, room, roomId, ids):
         # ids is list of number for which we search connection
@@ -132,15 +149,31 @@ class Floor:
                      min(r.y+r.height+2, self.height))
         for x_coord in range(x, w):
             for y_coord in range(y, h):
-                field = self.layout[0][x_coord][y_coord] # ACTUAL SHOULD BE AT 0 index
+                field = self.layout[x_coord][y_coord] # ACTUAL SHOULD BE AT 0 index
                 if field in ids and field not in accessed_floors:
+                    if self.is_it_corner(x_coord, y_coord, x, y, r.width, r.height):
+                        continue # It is corner touch do not count that
                     flag = True # Just one is enough :D
                     access_cnt += 1
                     accessed_floors.append(field)
         return flag, access_cnt
 
-        for i, r in enumerate(self.rooms()):
-            if i == roomId:
-                continue
+    def is_it_corner(self, x_c, y_c, x, y, w, h):
+        if x_c == x-1 and y_c == y-1:
+            return True # Left top corner
+        if x_c == x-1 and y_c == y+h+1:
+            return True # Right top corner
+        if x_c == x+w+1 and y_c == y-1:
+            return True # Left bottom corner
+        if x_c == x+w+1 and y_c == y+h+1:
+            return True # Right bottom corner
+        return False
+
+    def print_layout(self, fl):
+        print("Layout floor .... ")
+        for i in range(fl.width):
+            for j in range(fl.height):
+                print('%-2i' % fl.layout[i][j], end="")
+            print()
 
 

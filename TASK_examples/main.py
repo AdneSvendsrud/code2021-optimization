@@ -109,7 +109,11 @@ def validate_solution(floor_plan, rooms):
 
 def run_evolution():
     algo = Algorithm(100, 100)
-    algo.run(3)
+    rooms, optimal = algo.run(80)
+    if optimal:
+        print("Founded solution is optimal")
+    else:
+        print("Founded solution is not optimal")
     
 
 def dict_to_json(floor_plan, result_dict):
@@ -130,7 +134,7 @@ if __name__ == '__main__':
     result = brute_force(floor_plan, rooms)
     print('Results of brute-force:\n')
     json_solution = dict_to_json(floor_plan, result)
-    pprint.pprint(json_solution)
+    # pprint.pprint(json_solution)
 
     print("\n\n" + "#" * 100 + "\n\n" + "   Evolution\n\n")
     run_evolution()

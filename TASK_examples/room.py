@@ -3,7 +3,7 @@ class Room:
     def __init__(self, room_dict):
         self.height = room_dict['height']
         self.width = room_dict['width']
-        self.area = self.length * self.width
+        self.area = self.height * self.width
         if (room_dict['type'].lower() == "workroom"):
             self.type = "workplace"
         else:
