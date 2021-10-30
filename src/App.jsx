@@ -11,6 +11,9 @@ export default function App() {
   const [jsonValue, setJsonValue] = useState(
     JSON.stringify(jsonData)
   );
+  const [jsonValue2, setJsonValue2] = useState(
+    JSON.stringify(require('./basic_example_input2.json'))
+  );
 
   return (
     <div className="App">
@@ -20,7 +23,7 @@ export default function App() {
           <Renderer jsonValue={jsonValue} />
         </div>
         <div className="App-container__renderer">
-          <Renderer jsonValue={jsonValue} />
+          <Renderer jsonValue={jsonValue2} />
         </div>
         <div className="App-container__renderer">
           <Renderer jsonValue={jsonValue} />

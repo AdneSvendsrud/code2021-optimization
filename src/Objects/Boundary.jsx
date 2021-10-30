@@ -9,7 +9,7 @@ const Boundary = (props) => {
   return (
     <mesh position={position} ref={meshRef} rotation-x={Math.PI * -0.5}>
       <planeBufferGeometry args={[width, height]} />
-      <meshPhongMaterial color="#f6f6f6" opacity={0.7} transparent />
+      <meshPhongMaterial color="#ff0ff6" opacity={0.7} transparent />
     </mesh>
   );
 };

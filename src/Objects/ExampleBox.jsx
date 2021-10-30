@@ -2,6 +2,7 @@ import { useRef } from "react";
 
 // Example 3D Object 10x10x10 box
 const ExampleBox = (props) => {
+  let size = props.boxSize;
   const meshRef = useRef();
 
   return (
@@ -10,8 +11,8 @@ const ExampleBox = (props) => {
     // a geometry (the 3D object shape), a material (the
     // object's texture) and a position.
     <mesh ref={meshRef} {...props}>
-      <boxGeometry args={[10, 10, 10]} />
-      <meshStandardMaterial attach="material" color={"red"} />
+      <boxGeometry args={size.map(e => e)} />
+      <meshPhongMaterial attach="material" color={"white"} opacity={0.60} transparent/>
     </mesh>
   );
 };
