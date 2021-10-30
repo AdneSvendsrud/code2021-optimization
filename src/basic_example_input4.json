@@ -30,7 +30,7 @@
         "id": "2",
         "width": 10,
         "height": 10,
-        "anchorTopLeftX": 20,
+        "anchorTopLeftX": 50,
         "anchorTopLeftY": 50,
         "type": "workRoom"
       },
@@ -38,7 +38,7 @@
         "id": 3,
         "width": 20,
         "height": 50,
-        "anchorTopLeftX": 60,
+        "anchorTopLeftX": 0,
         "anchorTopLeftY": 40,
         "type": "meetRoom"
       },

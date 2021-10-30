@@ -36,14 +36,12 @@ const Renderer = (props) => {
   // ^^ 
 
   try {
-    // Feilmeldinger:
-
     for (const [key, value] of Object.entries(jsonObject.rooms)) {
       let tall = Math.ceil(Math.random()*6) + 4
       RoomsListHOC.push(
         <>
         <Room
-          key={key}
+          key={key, "roombox"}
           width={value.width}
           height={value.height}
           anchorTopLeftX={value.anchorTopLeftX}
@@ -68,7 +66,7 @@ const Renderer = (props) => {
     <React.Fragment>
       <input type="text" value={boundary_width} onChange={(event) => setBoundary_width(Number(event.currentTarget.value))}></input>
       <button onClick={() => {setBoundary_width(boundary_width + 1)}}>
-        Click me
+        Prin
       </button>
       <button onClick={() => {
         
