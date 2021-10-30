@@ -109,7 +109,7 @@ def validate_solution(floor_plan, rooms):
 
 def run_evolution():
     algo = Algorithm(100, 100)
-    rooms, optimal = algo.run(80)
+    rooms, optimal = algo.run(100)
     if optimal:
         print("Founded solution is optimal")
     else:

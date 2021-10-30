@@ -28,9 +28,9 @@ class Algorithm:
     testobject = {
         "planboundary": [
             {"x": 0, "y": 0}, 
-            {"x": 100, "y": 0}, 
-            {"x": 0, "y": 100}, 
-            {"x": 100, "y": 100}],
+            {"x": 50, "y": 0}, 
+            {"x": 0, "y": 60}, 
+            {"x": 50, "y": 60}],
         "rooms": [
             {"width": 10, 
             "height": 10, 
@@ -60,15 +60,15 @@ class Algorithm:
             "type": "workRoom"}]
     }
 
-    def __init__(self, floor_width, floor_height, N=5, test_obj=None):
+    def __init__(self, floor_width, floor_height, N=10, test_obj=None):
         self.floors = []
         self.width = floor_width
         self.heigth = floor_height
         if test_obj != None:
             self.testobject = test_obj
         else:
-            self.testobject = self.testobject2
-        if(not self.createFloors(N=1)):
+            self.testobject = self.testobject
+        if(not self.createFloors(N=N)):
             raise Exception('Floor is wrong')
         self.population_N = N
     '''
@@ -132,7 +132,7 @@ class Algorithm:
             print("="* 100)
             print("#" + "   Iteration  ", iter_i+1, flush=True)
 
-            for fl in self.floors:#[2:]:
+            for fl in self.floors[1:]:
                 
                 rms = copy.deepcopy(fl.workpl_ids) 
                 shuffle(rms)
@@ -141,7 +141,7 @@ class Algorithm:
                 shuffle(mts)
                 
                 # 6% rate of cross mutation 
-                if random() < 0.0:
+                if random() < 0.02:
                     print("Cross fit mutation")
                     if random() < 0.5:
                         self.cross_mutation_rooms(fl, [rms[0]])
@@ -160,12 +160,15 @@ class Algorithm:
             sorted_floors = sorted(self.floors, key=lambda x: x.fitness()[0], reverse=True)
             print("FITNESSes : ", [x.fitness()[0] for x in self.floors])
             self.floors = sorted_floors
-            self.print_layout(self.floors[0])
+
+            # Control whether there is any optimal solution
             correctness = [x.fitness()[1] for x in self.floors]
             if sum(correctness) > 0:
                 index = correctness.index(True)
                 print("Correctness", correctness)
+                self.print_layout(self.floors[index])
                 return self.floors[index].rooms, True
+            self.print_layout(self.floors[0])
         # Maybe return something
         return self.floors[0].rooms, False
 
@@ -174,7 +177,11 @@ class Algorithm:
         for i, r in enumerate(floor.rooms):
             if i not in idx:
                 continue
-            x, y = randint(0, floor.width-r.width), randint(0, floor.height-r.height)
+            x_prev, y_prev = floor.rooms[i].x, floor.rooms[i].y
+            if x_prev != -1 or y_prev != -1:
+                # Dealocate object place before
+                floor.restore_object(floor.rooms[i], x_prev, y_prev, i) 
+            x, y = randint(0, floor.width-r.width-1), randint(0, floor.height-r.height-1)
             overlap = floor.place_relax(i, x, y)
             if overlap > 0:
                 idx_to_relax.append((i,x,y,overlap))
@@ -225,6 +232,10 @@ class Algorithm:
                 cnt+=1
                 
                 min_idx = scores.index(min(scores))
+                # simulating anneling
+                if random() < 0.01:
+                    self.cross_mutation_rooms(floor, [i])
+                    return  
                 relax = (scores[min_idx] == 0) 
                 x, y = moves[min_idx]
                 # print(min_idx, relax, x, y)
@@ -293,7 +304,7 @@ class Algorithm:
         for i in range(fl.width):
             for j in range(fl.height):
                 if fl.layout[i][j] == -1:
-                    print("# ", end="")    
+                    print("- ", end="")    
                 else:
                     print('%-2i' % fl.layout[i][j], end="")
             print()

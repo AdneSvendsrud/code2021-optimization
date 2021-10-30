@@ -9,6 +9,8 @@ class FloorType(Enum):
     OPEN = -1
 
 fl_id = 0
+C = 99
+
 
 class Floor:
     def __init__(self, width, height, rooms):
@@ -106,6 +108,7 @@ class Floor:
     def fitness(self):
         fit_score = 0
         correctness = True
+
         for i, r in enumerate(self.rooms):
             x, y, w, h = r.x, r.y, r.width, r.height
             if r.type == "workplace":
@@ -113,7 +116,7 @@ class Floor:
                 fit_score += 5 * sum(walls)
                 if sum(walls) == 0:
                     correctness = False
-                flag, _ = self.access_to_ids(r, i, [-1]) # Access to open space
+                flag, _ = self.access_to_ids(r, i, [-1]) # Access to colored open space
                 if flag: 
                     fit_score += 3
                 else:
@@ -134,6 +137,25 @@ class Floor:
                     fit_score += neig_work * 2
                 else:
                     correctness = False
+        
+        # computation demanding part only if previous are correct
+        if correctness:
+            # color accessible open space from door
+            self.color_open_space(self.layout, self.width, self.height)
+
+            # for every room check acces to open space
+            for i, r in enumerate(self.rooms):
+                flag, _ = self.access_to_ids(r, i, [99])
+                if not flag:
+                    correctness = False
+                    break
+
+            # decolor open
+            for i in range(self.width):
+                for j in range(self.height):
+                    if self.layout[i][j] == 99:
+                        self.layout[i][j] = -1
+
         return fit_score, correctness
 
     def access_to_ids(self, room, roomId, ids):
@@ -175,5 +197,41 @@ class Floor:
             for j in range(fl.height):
                 print('%-2i' % fl.layout[i][j], end="")
             print()
+
+    def color_open_space(self, ar, w, h):
+        C = 99
+
+        visited = [] # List for visited nodes.
+        queue = []     #Initialize a queue
+
+        def bfs(ar, node, w, h): #function for BFS
+            visited.append(node)
+            queue.append(node)
+
+            while queue:          # Creating loop to visit each node
+                x, y = queue.pop(0)
+                if ar[x][y] == -1:
+                    ar[x][y] = C
+
+                for n in [(x-1,y), (x+1, y), (x, y-1), (x, y+1)]:
+                    if n not in visited:
+                        if n[0] < w and n[0] >= 0 and n[1] < h and n[1] >= 0:
+                            if ar[n[0]][n[1]] == -1:
+                                visited.append(n)
+                                queue.append(n)
+                    
+
+        if ar[0][0] == -1:
+            bfs(ar, (0,0), w, h)
+            return
+        if ar[0][h-1] == -1:
+            bfs(ar, (0,h-1), w, h)
+            return
+        if ar[w-1][0] == -1:
+            bfs(ar, (w-1,0), w, h)
+            return
+        if ar[w-1][h-1] == -1:
+            bfs(ar, (w-1,h-1), w, h)
+            return
 
 
