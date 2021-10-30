@@ -1,4 +1,3 @@
-from _typeshed import Self
 from math import floor
 from floor import Floor
 from random import randint, random, shuffle
@@ -46,6 +45,20 @@ class Algorithm:
             "height": 5, 
             "type": "workRoom"}]
     }
+    testobject2 = {
+        "planboundary": [
+            {"x": 0, "y": 0}, 
+            {"x": 10, "y": 0}, 
+            {"x": 0, "y": 15}, 
+            {"x": 10, "y": 15}],
+        "rooms": [
+            {"width": 2, 
+            "height": 2, 
+            "type": "workRoom"},
+            {"width": 3, 
+            "height": 2, 
+            "type": "workRoom"}]
+    }
 
     def __init__(self, floor_width, floor_height, N=5, test_obj=None):
         self.floors = []
@@ -53,8 +66,9 @@ class Algorithm:
         self.heigth = floor_height
         if test_obj != None:
             self.testobject = test_obj
-        # self.testobject = self.createTestObject()
-        if(not self.createFloors(N=N)):
+        else:
+            self.testobject = self.testobject2
+        if(not self.createFloors(N=1)):
             raise Exception('Floor is wrong')
         self.population_N = N
     '''
@@ -109,40 +123,51 @@ class Algorithm:
     '''
     def run(self, iter_cnt=100):
         for f in self.floors:
+            print("Placing floor...")
             self.cross_mutation_rooms(f, idx=list(range(len(f.rooms))))
-
-        # for_mutation_floor = self.floors[2:] # keep first to as best
-        # best_for_mutation = [copy.deepcopy(self.floors[0]),
-        #                      copy.deepcopy(self.floors[0]),
-        #                      copy.deepcopy(self.floors[1]),
-        #                      copy.deepcopy(self.floors[1])]
-
-        # for_mutation_floor.extend(best_for_mutation)
+        print("Placing floor is done...")
 
         for iter_i in range(iter_cnt):
-            for fl in self.floors[2:]:
-                rms = shuffle(fl.workpl_ids)
-                mts = shuffle(fl.meet_ids)
 
+            print("="* 100)
+            print("#" + "   Iteration  ", iter_i+1, flush=True)
+
+            for fl in self.floors:#[2:]:
+                
+                rms = copy.deepcopy(fl.workpl_ids) 
+                shuffle(rms)
+                
+                mts = copy.deepcopy(fl.meet_ids)
+                shuffle(mts)
+                
                 # 6% rate of cross mutation 
-                if random() < 0.06:
+                if random() < 0.0:
+                    print("Cross fit mutation")
                     if random() < 0.5:
-                        self.cross_mutation_rooms(fl, rms[0])
-                    else:
-                        self.cross_mutation_rooms(fl, mts[0])
+                        self.cross_mutation_rooms(fl, [rms[0]])
+                    elif len(mts) > 0:
+                        self.cross_mutation_rooms(fl, [mts[0]])
 
                 # mutate all rooms
                 for r_i in rms:
                     r = fl.rooms[r_i]
-                    self.mutate_room(fl, r, randint(8), r_i)
+                    self.mutate_room(fl, r, randint(0,3), r_i) # DEBUG
                 for m_i in mts:
                     r = fl.rooms[m_i]
-                    self.mutate_room(fl, r, randint(8), m_i)
+                    self.mutate_room(fl, r, randint(0,3), m_i) # DEBUG
 
             # calculate fitness for all floors
-            sorted_floors = sorted(self.floors, key=lambda x: x.fitness(), reverse=True)
+            sorted_floors = sorted(self.floors, key=lambda x: x.fitness()[0], reverse=True)
+            print("FITNESSes : ", [x.fitness()[0] for x in self.floors])
             self.floors = sorted_floors
+            self.print_layout(self.floors[0])
+            correctness = [x.fitness()[1] for x in self.floors]
+            if sum(correctness) > 0:
+                index = correctness.index(True)
+                print("Correctness", correctness)
+                return self.floors[index].rooms, True
         # Maybe return something
+        return self.floors[0].rooms, False
 
     def cross_mutation_rooms(self, floor, idx):
         idx_to_relax = []
@@ -153,41 +178,91 @@ class Algorithm:
             overlap = floor.place_relax(i, x, y)
             if overlap > 0:
                 idx_to_relax.append((i,x,y,overlap))
+                floor.restore_object(floor.rooms[i], x, y, i) 
+            else:
+                r.set_coords(x, y)
+            
+        # print('INDEXES FOR RELAXATION' , idx_to_relax)
         
-        self.relax_room(floor, idx_to_relax)
 
-        floor.placing_done()  
+        self.relax_room(floor, idx_to_relax)
+        # self.mutate_room(floor, floor.rooms[1], 2, 1) # DEBUG 
 
     def relax_room(self, floor, idx_to_relax):
         # relax overlaping objects, [(room_i,x,y,overlap)]
+
+        # print('TO RELAX', idx_to_relax)
         for i, x, y, s in idx_to_relax:
             relax = False
             prev_s = s
+            cnt = 0
             while not relax:
+                # self.print_layout(floor)
+                print(x, y)
                 floor.restore_object(floor.rooms[i], x, y, i)
-                moves = shuffle([(x-1, y),(x, y-1), (x, y+1), (x+1, y),
-                         (x-1, y+1),(x-1, y-1), (x+1, y-1), (x+1, y+1)])
+                # moves = [(x-1, y),(x, y-1), (x, y+1), (x+1, y),
+                #          (x-1, y+1),(x-1, y-1), (x+1, y-1), (x+1, y+1)]
+                # moves = [(max(x-1,0), y),(x, max(y-1,0)), 
+                #         (x, min(y+1, floor.height)),
+                #         (min(x+1, floor.width), y),
+                #         (max(x-1,0), min(y+1, floor.height)),
+                #         (max(x-1,0), max(y-1,0)), (min(x+1,floor.width),
+                #         max(y-1,0)), 
+                #         (min(x+1,floor.width), min(y+1, floor.height))]
+
+                moves = [(max(x-1,0), y),(x, max(y-1,0)),
+                        (x, min(y+1, floor.height)),
+                        (min(x+1, floor.width), y)]  
+                shuffle(moves)
                 scores = []
+                # print("MOVES ", moves)
                 for x_n, y_n in moves:
                     scores.append(floor.place_relax(i, x_n, y_n))
+                    floor.restore_object(floor.rooms[i], x_n, y_n, i)
+                
+                cnt+=1
+                
                 min_idx = scores.index(min(scores))
                 relax = (scores[min_idx] == 0) 
                 x, y = moves[min_idx]
+                # print(min_idx, relax, x, y)
+                # if cnt == 3:
+                #     exit(0)
+            # Finally place room
+            floor.place_relax(i, x, y)
+            floor.rooms[i].set_coords(x, y)
+            # exit(0)
 
     def mutate_room(self, fl, room, direction, roomId):
-        # simply make move to some direction 
+        # simply make move to some direction
         x, y = room.x, room.y
-        moves = [(x-1, y),(x, y-1), (x, y+1), (x+1, y),
-                (x-1, y+1),(x-1, y-1), (x+1, y-1), (x+1, y+1)]
+        fl.restore_object(room, x, y, roomId)
+
+        moves = [(max(x-1,0), y),(x, max(y-1,0)), (x, min(y+1, fl.height)),
+                 (min(x+1, fl.width), y),
+                (max(x-1,0), min(y+1, fl.height)),
+                (max(x-1,0), max(y-1,0)), (min(x+1,fl.width), max(y-1,0)), 
+                (min(x+1,fl.width), min(y+1, fl.height))]
+
+
+        moves = [(max(x-1,0), y),(x, max(y-1,0)), (x, min(y+1, fl.height)),
+                 (min(x+1, fl.width), y)]            
+                
+
         x_n, y_n = moves[direction]
+        # print("MOVING TO {} {} from {} {}", x_n, y_n, x, y)         
+
         score = fl.place_relax(roomId, x_n, y_n)
         if score > 0:
-            self.relax_room(floor, [(roomId, x_n, y_n, score)])
-        floor.placing_done()
+            # fl.restore_object(room, x_n, y_n, roomId)
+            self.relax_room(fl, [(roomId, x_n, y_n, score)])
+        else:
+            room.set_coords(x_n, y_n)
 
     def createFloors(self, N):
         self.population_N = N
-        for _ in range(N):
+        for i in range(N):
+            print("Index of added floor is :  ", i)
             try:
                 self.floors.append(Floor(self.testobject["planboundary"][3]["x"], self.testobject["planboundary"][3]["y"], self.testobject))
             except Exception as error:
@@ -209,3 +284,13 @@ class Algorithm:
             {"width": randint(5, 20), "height": randint(5, 20)} for _ in range(randint(1, 15))
             ]
     }
+
+    def print_layout(self, fl):
+        print("Layout .... ")
+        for i in range(fl.width):
+            for j in range(fl.height):
+                if fl.layout[i][j] == -1:
+                    print("# ", end="")    
+                else:
+                    print('%-2i' % fl.layout[i][j], end="")
+            print()
