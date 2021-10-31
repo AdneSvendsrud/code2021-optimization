@@ -45,6 +45,36 @@ class Algorithm:
             "height": 5, 
             "type": "workRoom"}]
     }
+    testobject_3m_5r = {
+        "planboundary": [
+            {"x": 0, "y": 0}, 
+            {"x": 50, "y": 0}, 
+            {"x": 0, "y": 60}, 
+            {"x": 50, "y": 60}],
+        "rooms": [
+            {"width": 10, 
+            "height": 10, 
+            "type": "workRoom"},
+            {"width": 5, 
+            "height": 5, 
+            "type": "workRoom"},
+            {"width": 5, 
+            "height": 5, 
+            "type": "workRoom"},
+            {"width": 10, 
+            "height": 20, 
+            "type": "meeting"},
+            {"width": 10, 
+            "height": 10, 
+            "type": "meeting"},
+            {"width": 10, 
+            "height": 10, 
+            "type": "meeting"},
+            {"width": 15, 
+            "height": 5, 
+            "type": "workRoom"}]
+    }
+    
     testobject2 = {
         "planboundary": [
             {"x": 0, "y": 0}, 
@@ -60,14 +90,14 @@ class Algorithm:
             "type": "workRoom"}]
     }
 
-    def __init__(self, floor_width, floor_height, N=10, test_obj=None):
+    def __init__(self, floor_width, floor_height, N=20, test_obj=None):
         self.floors = []
         self.width = floor_width
         self.heigth = floor_height
         if test_obj != None:
             self.testobject = test_obj
         else:
-            self.testobject = self.testobject
+            self.testobject = self.testobject_3m_5r
         if(not self.createFloors(N=N)):
             raise Exception('Floor is wrong')
         self.population_N = N
@@ -125,6 +155,7 @@ class Algorithm:
         for f in self.floors:
             print("Placing floor...")
             self.cross_mutation_rooms(f, idx=list(range(len(f.rooms))))
+            f.store_init_state()
         print("Placing floor is done...")
 
         for iter_i in range(iter_cnt):
@@ -156,6 +187,12 @@ class Algorithm:
                     r = fl.rooms[m_i]
                     self.mutate_room(fl, r, randint(0,7), m_i) # DEBUG
 
+                # store state of layout to memory
+                fl.store_state()
+
+            # store state for the first floor too
+            self.floors[0].store_state()
+
             # calculate fitness for all floors
             sorted_floors = sorted(self.floors, key=lambda x: x.fitness()[0], reverse=True)
             print("FITNESSes : ", [x.fitness()[0] for x in self.floors])
@@ -167,10 +204,10 @@ class Algorithm:
                 index = correctness.index(True)
                 print("Correctness", correctness)
                 self.print_layout(self.floors[index])
-                return self.floors[index].rooms, True
+                return self.floors[index], True
             self.print_layout(self.floors[0])
         # Maybe return something
-        return self.floors[0].rooms, False
+        return self.floors[0], False
 
     def cross_mutation_rooms(self, floor, idx):
         idx_to_relax = []
@@ -235,7 +272,7 @@ class Algorithm:
                 # simulating anneling
                 if random() < 0.01:
                     self.cross_mutation_rooms(floor, [i])
-                    return  
+                    return 
                 relax = (scores[min_idx] == 0) 
                 x, y = moves[min_idx]
                 # print(min_idx, relax, x, y)
