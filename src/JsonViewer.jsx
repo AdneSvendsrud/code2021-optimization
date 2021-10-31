@@ -1,7 +1,7 @@
 import React from "react";
 
 // Formats raw JSON into a nicely tabbed version that looks good.
-function prettyPrint(value: string) {
+function prettyPrint(value) {
   let pretty = value;
   try {
     const obj = JSON.parse(pretty);
