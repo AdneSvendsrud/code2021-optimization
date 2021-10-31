@@ -142,7 +142,7 @@ def evo_json(floor_w, floor_h, rooms, json_name):
 
 def run_evolution():
     algo = Algorithm(100, 100)
-    floor, optimal = algo.run(1000)
+    floor, optimal = algo.run(10000)
     if optimal:
         print("Founded solution is optimal")
     else:

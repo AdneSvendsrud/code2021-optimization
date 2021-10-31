@@ -90,14 +90,14 @@ class Algorithm:
             "type": "workRoom"}]
     }
 
-    def __init__(self, floor_width, floor_height, N=20, test_obj=None):
+    def __init__(self, floor_width, floor_height, N=30, test_obj=None):
         self.floors = []
         self.width = floor_width
         self.heigth = floor_height
         if test_obj != None:
             self.testobject = test_obj
         else:
-            self.testobject = self.testobject_3m_5r
+            self.testobject = self.testobject
         if(not self.createFloors(N=N)):
             raise Exception('Floor is wrong')
         self.population_N = N
@@ -182,10 +182,10 @@ class Algorithm:
                 # mutate all rooms
                 for r_i in rms:
                     r = fl.rooms[r_i]
-                    self.mutate_room(fl, r, randint(0,7), r_i) # DEBUG
+                    self.mutate_room(fl, r, randint(0,3), r_i) # DEBUG
                 for m_i in mts:
                     r = fl.rooms[m_i]
-                    self.mutate_room(fl, r, randint(0,7), m_i) # DEBUG
+                    self.mutate_room(fl, r, randint(0,3), m_i) # DEBUG
 
                 # store state of layout to memory
                 fl.store_state()
@@ -195,7 +195,7 @@ class Algorithm:
 
             # calculate fitness for all floors
             sorted_floors = sorted(self.floors, key=lambda x: x.fitness()[0], reverse=True)
-            print("FITNESSes : ", [x.fitness()[0] for x in self.floors])
+            # print("FITNESSes : ", [x.fitness()[0] for x in self.floors])
             self.floors = sorted_floors
 
             # Control whether there is any optimal solution
@@ -205,7 +205,7 @@ class Algorithm:
                 print("Correctness", correctness)
                 self.print_layout(self.floors[index])
                 return self.floors[index], True
-            self.print_layout(self.floors[0])
+            # self.print_layout(self.floors[0])
         # Maybe return something
         return self.floors[0], False
 
@@ -242,23 +242,23 @@ class Algorithm:
             cnt = 0
             while not relax:
                 # self.print_layout(floor)
-                print(x, y)
+                # print(x, y)
                 floor.restore_object(floor.rooms[i], x, y, i)
                 # moves = [(x-1, y),(x, y-1), (x, y+1), (x+1, y),
                 #          (x-1, y+1),(x-1, y-1), (x+1, y-1), (x+1, y+1)]
 
                 # 8 direction move support
-                moves = [(max(x-1,0), y),(x, max(y-1,0)), 
-                        (x, min(y+1, floor.height)),
-                        (min(x+1, floor.width), y),
-                        (max(x-1,0), min(y+1, floor.height)),
-                        (max(x-1,0), max(y-1,0)), 
-                        (min(x+1,floor.width),max(y-1,0)), 
-                        (min(x+1,floor.width), min(y+1, floor.height))]
-
-                # moves = [(max(x-1,0), y),(x, max(y-1,0)),
+                # moves = [(max(x-1,0), y),(x, max(y-1,0)), 
                 #         (x, min(y+1, floor.height)),
-                #         (min(x+1, floor.width), y)]  
+                #         (min(x+1, floor.width), y),
+                #         (max(x-1,0), min(y+1, floor.height)),
+                #         (max(x-1,0), max(y-1,0)), 
+                #         (min(x+1,floor.width),max(y-1,0)), 
+                #         (min(x+1,floor.width), min(y+1, floor.height))]
+
+                moves = [(max(x-1,0), y),(x, max(y-1,0)),
+                        (x, min(y+1, floor.height)),
+                        (min(x+1, floor.width), y)]  
                 shuffle(moves)
                 scores = []
                 # print("MOVES ", moves)
@@ -289,15 +289,15 @@ class Algorithm:
         fl.restore_object(room, x, y, roomId)
 
         # 8 direction move
-        moves = [(max(x-1,0), y),(x, max(y-1,0)), (x, min(y+1, fl.height)),
-                 (min(x+1, fl.width), y),
-                (max(x-1,0), min(y+1, fl.height)),
-                (max(x-1,0), max(y-1,0)), (min(x+1,fl.width), max(y-1,0)), 
-                (min(x+1,fl.width), min(y+1, fl.height))]
-
-
         # moves = [(max(x-1,0), y),(x, max(y-1,0)), (x, min(y+1, fl.height)),
-        #          (min(x+1, fl.width), y)]            
+        #          (min(x+1, fl.width), y),
+        #         (max(x-1,0), min(y+1, fl.height)),
+        #         (max(x-1,0), max(y-1,0)), (min(x+1,fl.width), max(y-1,0)), 
+        #         (min(x+1,fl.width), min(y+1, fl.height))]
+
+
+        moves = [(max(x-1,0), y),(x, max(y-1,0)), (x, min(y+1, fl.height)),
+                 (min(x+1, fl.width), y)]            
                 
 
         x_n, y_n = moves[direction]

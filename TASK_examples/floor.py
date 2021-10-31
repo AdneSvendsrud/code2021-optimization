@@ -55,7 +55,7 @@ class Floor:
 
     def store_state(self):
         if len(self.memory) > 10:
-            self.memory.pop()
+            self.memory  = self.memory[1:]
         self.memory.append(copy.deepcopy(self.rooms))
 
     def get_memory(self):
@@ -180,7 +180,7 @@ class Floor:
         r = room
         flag = False
         access_cnt = 0
-        accessed_floors = []
+        accessed_floors = [roomId]
         # wrapper around object
         x, y, w, h = (max(0, r.x-1), max(0, r.y-1), 
                      min(r.x+r.width+2, self.width), 
