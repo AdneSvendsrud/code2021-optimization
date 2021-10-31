@@ -25,7 +25,7 @@ __        __       _                                 _
 # This is an example script of how to (very simply) solve the given problems
 
 # Import required packages
-import numpy as np
+# import numpy as np
 import json
 import pprint
 
@@ -107,13 +107,54 @@ def brute_force(floor_plan, rooms):
 def validate_solution(floor_plan, rooms):
     print("Add your validation function here")
 
+def evo_json(floor_w, floor_h, rooms, json_name):
+    final_dict = {
+        "planBoundary": [
+            {"x": 0, "y": 0}, 
+            {"x": floor_w, "y": 0}, 
+            {"x": 0, "y": floor_w}, 
+            {"x": floor_w, "y": floor_h}],
+        "rooms": []
+    }
+
+    for id_r, r in enumerate(rooms):
+        res = {
+            'anchorTopLeftX': r.x,
+            'anchorTopLeftY': r.y,
+            'height': r.height,
+            'id': id_r,
+            'type': r.type,
+            'width': r.width
+        }
+        final_dict['rooms'].append(res)
+
+    json_str = json.dumps(final_dict, indent=4)
+
+    file_name = 'src/'+ json_name+'.json'
+
+    with open(file_name, 'w') as json_file:
+        json.dump(final_dict, json_file)
+    print("+" + "-" * 100)
+    print("Solution was found and stored in {}".format(file_name))
+    print()
+    return json_str
+
+
 def run_evolution():
     algo = Algorithm(100, 100)
-    rooms, optimal = algo.run(100)
+    floor, optimal = algo.run(1000)
     if optimal:
         print("Founded solution is optimal")
     else:
         print("Founded solution is not optimal")
+    print('\n\n')
+
+    evo_json(floor.width, floor.height, floor.rooms, 'evo_final_solution')
+
+    mem = floor.get_memory()
+    for i, state in enumerate(mem):
+        json_name = "evo_{}".format(i)
+        evo_json(floor.width, floor.height, state, json_name)
     
 
 def dict_to_json(floor_plan, result_dict):
@@ -129,12 +170,15 @@ def dict_to_json(floor_plan, result_dict):
     print()
     return json_str
 
+
+
 if __name__ == '__main__':
     floor_plan, rooms = parse_json('./TASK_examples/basic_example_input.json')
     result = brute_force(floor_plan, rooms)
     print('Results of brute-force:\n')
+
     json_solution = dict_to_json(floor_plan, result)
-    # pprint.pprint(json_solution)
+    pprint.pprint(result)
 
     print("\n\n" + "#" * 100 + "\n\n" + "   Evolution\n\n")
     run_evolution()
