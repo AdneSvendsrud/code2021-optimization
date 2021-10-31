@@ -33,6 +33,7 @@ const Renderer = (props) => {
   let [boundary_size, setBoundary_size] = useState(
     Math.max(boundary_height, boundary_width)
   );
+  let [jsonObjectIndex, setJsonIndex] = useState(0)
   // ^^ 
 
   try {
@@ -64,12 +65,11 @@ const Renderer = (props) => {
 
   return (
     <React.Fragment>
-      <input type="text" value={boundary_width} onChange={(event) => setBoundary_width(Number(event.currentTarget.value))}></input>
+{/*       <input type="text" value={boundary_width} onChange={(event) => setBoundary_width(Number(event.currentTarget.value))}></input>
       <button onClick={() => {setBoundary_width(boundary_width + 1)}}>
         Prin
-      </button>
+      </button> */}
       <button onClick={() => {
-        
         if (perspective.x != 0 || perspective.z != 0) {
          changePerspective(new Vector3(0, 512, 0))
         } else {
@@ -77,6 +77,32 @@ const Renderer = (props) => {
         }}>
         {buttonText_3d}
       </button>
+
+        
+        <form action={(event) => (setJsonIndex(event.currentTarget))} className="strokeme">
+        <p>Please select your wanted iteration from the last 10:</p>
+          <input type="radio" id="0" name="iterationindex" value="0" />
+          <label htmlFor="0">1</label>
+          <input type="radio" id="1" name="iterationindex" value="1" />
+          <label htmlFor="1">2</label>
+          <input type="radio" id="2" name="iterationindex" value="2" />
+          <label htmlFor="2">3</label>
+          <input type="radio" id="3" name="iterationindex" value="3" />
+          <label htmlFor="3">4</label>
+          <input type="radio" id="4" name="iterationindex" value="4" />
+          <label htmlFor="4">5</label>
+          <input type="radio" id="5" name="iterationindex" value="5" />
+          <label htmlFor="5">6</label>
+          <input type="radio" id="6" name="iterationindex" value="6" />
+          <label htmlFor="6">7</label>
+          <input type="radio" id="7" name="iterationindex" value="7" />
+          <label htmlFor="7">8</label>
+          <input type="radio" id="8" name="iterationindex" value="8" />
+          <label htmlFor="8">9</label>
+          <input type="radio" id="9" name="iterationindex" value="9" />
+          <label htmlFor="9">10</label><br />
+        <input type="submit" value="Submit" />
+        </form>
 
       <Canvas
         style={{
