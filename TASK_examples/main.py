@@ -47,15 +47,6 @@ def parse_json(filepath):
         floor_plan = data['planBoundary']
         room_dict = data['rooms']
 
-    # To get a feeling for what our data looks like, let's print the contents
-    print(f'Coordinate array:')
-    pprint.pprint(floor_plan)
-    print('\n')
-    print(f'Room dictionary:\n')
-    pprint.pprint(room_dict)
-    print('\n')
-    return floor_plan, room_dict
-
 
 def brute_force(floor_plan, rooms):
     """
@@ -130,7 +121,7 @@ def dict_to_json(floor_plan, result_dict):
     return json_str
 
 if __name__ == '__main__':
-    floor_plan, rooms = parse_json('./TASK_examples/basic_example_input.json')
+    floor_plan, rooms = parse_json('../src/basic_example_input.json')
     result = brute_force(floor_plan, rooms)
     print('Results of brute-force:\n')
     json_solution = dict_to_json(floor_plan, result)
