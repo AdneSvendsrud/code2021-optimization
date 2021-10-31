@@ -1,3 +1,4 @@
+import copy
 from typing import overload
 from room import Room
 
@@ -45,6 +46,21 @@ class Floor:
 
         self.midx = height // 2
         self.midy = width // 2
+
+        self.memory = [] # array of arrays of rooms FIFO last 10
+        self.init_mem = []
+
+    def store_init_state(self):
+        self.init_mem.append(copy.deepcopy(self.rooms))
+
+    def store_state(self):
+        if len(self.memory) > 10:
+            self.memory.pop()
+        self.memory.append(copy.deepcopy(self.rooms))
+
+    def get_memory(self):
+        self.init_mem.extend(self.memory)
+        return self.init_mem
 
     def place_room(self, roomId, x, y):
         room = self.rooms[roomId]
